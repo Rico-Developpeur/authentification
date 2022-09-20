@@ -2,12 +2,19 @@ const express = require("express");
 
 const router = express.Router();
 
-const itemControllers = require("./controllers/itemControllers");
+const userControllers = require("./controllers/usersControllers");
+const authMiddlewares = require("./middlewares/auth");
 
-router.get("/items", itemControllers.browse);
-router.get("/items/:id", itemControllers.read);
-router.put("/items/:id", itemControllers.edit);
-router.post("/items", itemControllers.add);
-router.delete("/items/:id", itemControllers.destroy);
+router.post("/signup", authMiddlewares.hashPassword, userControllers.signUp);
+
+const getMovies = (req, res) => {
+  res
+    .status(200)
+    .json({ movies: [{ name: "Kung Fu Panda" }, { name: "Superman" }] });
+};
+
+router.use(authMiddlewares.verifyToken);
+
+router.get("/movies", getMovies);
 
 module.exports = router;
